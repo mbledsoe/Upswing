@@ -12,8 +12,8 @@ namespace Upswing
         [Option('c', "connectionString", Required = true, HelpText = "The connection string to use for querying SQL Server table metadata.")]
         public string ConnectionString { get; set; }
 
-        //[Option('t', "tables", Required = false, HelpText = "Comma separated list of tables to query for generation.")]
-        //public string Tables { get; set; }
+        [Option('t', "tables", Required = false, HelpText = "Comma separated list of tables to query for generation.", Separator = ',', Default = new string[0])]
+        public IEnumerable<string> Tables { get; set; }
 
         [Option('o', "output", Required = true, HelpText = "Ouput location for generated files.")]
         public string Output { get; set; }

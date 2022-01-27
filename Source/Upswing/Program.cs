@@ -25,13 +25,17 @@ namespace Upswing
 
                 var dao = new SqlServerMetadataDao(conn);
                 var tableDefinitions = dao.GetTableDefinitions();
-
                 var entityRenderer = new EntityFileRenderer();
+
+                ITableSpec tableSpec = (options.Tables.Any()) ? new MatchOnNameTableSpec(options.Tables.ToList()) : new MatchAllTableSpec();
 
                 foreach (var tableDef in tableDefinitions)
                 {
-                    Console.WriteLine($"Generating for table {tableDef.TableName}.");
-                    entityRenderer.Render(tableDef, options.Output, options.Namespace);                    
+                    if (tableSpec.IsMatch(tableDef))
+                    {
+                        Console.WriteLine($"Generating for table {tableDef.TableName}.");
+                        entityRenderer.Render(tableDef, options.Output, options.Namespace);
+                    }                    
                 }
             }
         }
