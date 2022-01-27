@@ -1,0 +1,11 @@
+﻿using System;
+
+namespace {{ namespace }}
+{
+	public class {{ entity_name }}
+	{
+		{{ for property in properties }}		
+		public {{ property.type_name }} {{ property.name }} { get; set; }
+		{{ end }}
+	}
+}
