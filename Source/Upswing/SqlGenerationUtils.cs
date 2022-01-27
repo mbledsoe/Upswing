@@ -21,6 +21,8 @@ namespace Upswing
             }
         }
 
+        // Query to get data type IDs:
+        // select * from sys.types where name in ('char', 'varchar', 'nvarchar', 'text', 'ntext')
         internal static string GetClrTypeName(ColumnDefinition column)
         {
             switch (column.SystemTypeId)
