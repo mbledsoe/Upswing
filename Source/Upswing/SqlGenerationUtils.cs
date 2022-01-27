@@ -31,6 +31,14 @@ namespace Upswing
                     return column.IsNullable ? "DateTime?" : "DateTime";
                 case 104:
                     return column.IsNullable ? "bool?" : "bool";
+                case 106:
+                    return column.IsNullable ? "double?" : "double";
+                case 127:
+                    return column.IsNullable ? "long?" : "long";
+                case 35:
+                case 99:
+                case 167:
+                case 175:
                 case 231:
                     return "string";
                 default:
