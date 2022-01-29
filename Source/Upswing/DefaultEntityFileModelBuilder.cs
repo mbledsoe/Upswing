@@ -36,7 +36,7 @@ namespace Upswing
             return tableDef.Columns.Select(c => new EntityFileProperty
             {
                 Name = propertyNameTransformer.TransformName(c),
-                TypeName = SqlUtils.GetClrTypeName(c),
+                ClrType = SqlUtils.GetClrTypeName(c),
                 Column = c
             }).ToList();
         }

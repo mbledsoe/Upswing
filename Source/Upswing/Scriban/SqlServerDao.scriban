@@ -1,0 +1,135 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+
+namespace {{ namespace }}
+{
+	public partial class {{ entity_name }}Dao : I{{ entity_name }}Dao
+	{
+		private const string insertSql = "{{ insert_sql }}";
+		private const string selectByIdSql = "{{ select_sql }}";		
+		private const string updateSql = "{{ update_sql }}";
+		private const string deleteSql = "{{ delete_sql }}";
+
+		private readonly SqlConnection conn;
+		
+		public {{ entity_name }}Dao(SqlConnection conn)
+		{
+			this.conn = conn;
+		}
+
+		public void Insert({{ entity_name }} entity)
+		{
+			var cmd = CreateCommand();
+			cmd.CommandText = insertSql;
+
+			{{- for parameter in insert_parameters }}
+			cmd.Parameters.Add(new SqlParameter { ParameterName = "{{ parameter.name }}", SqlDbType = {{ parameter.sql_db_type }}, Size = {{ parameter.size }}, Value = GetDbValue(entity.{{ parameter.value_accessor }}) });
+			{{- end }}
+
+			var retval = cmd.ExecuteScalar();
+
+			entity.{{ id_column.column_name }} = Convert.ToInt32(retval);
+		}
+
+		public void Update({{ entity_name }} entity)
+		{
+			var cmd = CreateCommand();
+			cmd.CommandText = updateSql;
+
+			{{- for parameter in update_parameters }}
+			cmd.Parameters.Add(new SqlParameter { ParameterName = "{{ parameter.name }}", SqlDbType = {{ parameter.sql_db_type }}, Size = {{ parameter.size }}, Value = GetDbValue(entity.{{ parameter.value_accessor }}) });				
+			{{- end }}			
+
+			cmd.ExecuteNonQuery();
+		}
+
+		public void Delete({{ entity_name }} entity)
+		{
+			var cmd = CreateCommand();
+			cmd.CommandText = deleteSql;
+			cmd.Parameters.Add(new SqlParameter { ParameterName = "{{ id_column.column_name }}", SqlDbType = SqlDbType.Int, Value = entity.{{ id_column.column_name }} });
+
+			cmd.ExecuteNonQuery();
+		}
+
+		public {{ entity_name }} GetById(int id)
+		{
+			var cmd = sqlContextFactory.GetContext().CreateCommand();			
+			cmd.CommandText = selectByIdSql;
+			cmd.Parameters.Add(new SqlParameter { ParameterName = "{{ id_column.column_name }}", SqlDbType = SqlDbType.Int, Value = id });
+
+			return ExecuteList(cmd, MapEntity).Single();
+		}
+
+		public IList<{{ entity_name }}> GetByIdList(IList<int> idList)
+		{
+			if (idList == null || idList.Count == 0)
+            {
+                return new List<{{ entity_name }}>();
+            }
+
+			var cmd = CreateCommand();
+			var inParamList = new List<SqlParameter>();
+			
+			for (var i = 0; i < idList.Count; i++)
+			{
+				var parameter = new SqlParameter { ParameterName = $"_p{i}_{{ id_column.column_name }}", SqlDbType = SqlDbType.Int, Value = idList[i] };				
+				cmd.Parameters.Add(parameter);
+			}
+
+			var idInList = string.Join(",", cmd.Parameters.Select(p => $"@{p.ParameterName}"));            
+            cmd.CommandText = $@"select * from {{ entity_name }} where {{ id_column.column_name }} in ({idInList})";            
+
+            return ExecuteList(cmd, MapEntity);
+		}
+
+		private {{ entity_name }} MapEntity(SqlDataReader rdr)
+		{
+			return new {{ entity_name }}
+			{
+			{{- for property in properties }}
+				{{- if property.is_nullable }}
+					{{ property.name }} = (rdr["{{property.name}}"] == DBNull.Value ? ({{property.clr_type}})null : ({{property.clr_type}})rdr["{{property.name}}"]),
+				{{- else }}
+					{{ property.name }} = ({{property.clr_type}})rdr["{{property.name}}"],
+				{{- end }}		
+			{{- end }}
+			};
+		}
+
+		private IList<{{ entity_name }}> ExecuteList(SqlCommand cmd, Func<SqlDataReader, {{ entity_name }}> mapFunc)
+		{
+			var results = new List<TEntity>();
+
+			using (var rdr = cmd.ExecuteReader())
+			{
+				while (rdr.Read())
+				{
+					results.Add(mapFunc(rdr));					
+				}
+			}
+
+			return results;
+		}
+
+		private SqlCommand CreateCommand()
+		{
+			return conn.CreateCommand();
+		}
+				
+		private static object GetDbValue(object value)
+        {
+            if (value == null)
+            {
+                return DBNull.Value;
+            }            
+            else
+            {
+                return value;
+            }
+        }
+	}
+}

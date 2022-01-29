@@ -19,18 +19,31 @@ namespace Upswing
         {
             var tableDefinitionSource = new SqlServerTableDefinitionSource(options.ConnectionString);
             var tableSpec = GetGeneratorTableSpec(options.Tables);
-            var entityGenerator = CreateEntityGenerator(options.Output);
-            var dapperMapperGenerator = CreateDapperMapperGeneartor(options.Output);
-
             var generationProcess = new GenerationProcess();
 
-            Console.WriteLine($"Started generating Entity files.");
+            Console.WriteLine($"Generating Entity files.");
+            var entityGenerator = CreateEntityGenerator(options.Output);
             generationProcess.Run(tableDefinitionSource, tableSpec, entityGenerator, options.Namespace);
             Console.WriteLine($"Finished generating Entity files.");
 
-            Console.WriteLine($"Started generating DapperMapper files.");
+            Console.WriteLine($"Generating DapperMapper files.");
+            var dapperMapperGenerator = CreateDapperMapperGeneartor(options.Output);
             generationProcess.Run(tableDefinitionSource, tableSpec, dapperMapperGenerator, options.Namespace);
             Console.WriteLine($"Finished generating DapperMapper files.");
+
+            /*
+             * Commenting these out for now... I'll come back and refactor some of this tomorrow.
+             * 
+            Console.WriteLine($"Generating Interface DAO files.");
+            var interfaceDaoGenerator = CreateInterfaceDaoGenerator(options.Output);
+            generationProcess.Run(tableDefinitionSource, tableSpec, interfaceDaoGenerator, options.Namespace);
+            Console.WriteLine($"Finished generating Interface DAO files.");
+
+            Console.WriteLine($"Generating SqlServer DAO files.");
+            var sqlServerDaoGenerator = CreateSqlServerDaoGenerator(options.Output);
+            generationProcess.Run(tableDefinitionSource, tableSpec, sqlServerDaoGenerator, options.Namespace);
+            Console.WriteLine($"Finished generating SqlServer DAO files.");
+            */
         }
 
         private static ITableSpec GetGeneratorTableSpec(IEnumerable<string> tables)
@@ -38,20 +51,36 @@ namespace Upswing
             return tables.Any() ? new MatchOnNameTableSpec(tables.ToList()) : new MatchAllTableSpec();
         }
 
-        static EntityGenerator CreateEntityGenerator(string outputPath)
+        private static IGenerator CreateInterfaceDaoGenerator(string outputPath)
+        {
+            return new DataAccessObjectGenerator(
+                new DefaultDataAccessFileModelBuilder(new DefaultPropertyNameTransformer(), new DefaultDatabaseConventions()),
+                new ScribanTemplate<DataAccessObjectFileModel>(new EmbeddedTemplateSource("Upswing.Scriban.InterfaceDao.scriban")),
+                new DataAccessFileOutputWriter(outputPath, "I{0}Dao.generated.cs"));
+        }
+
+        private static IGenerator CreateSqlServerDaoGenerator(string outputPath)
+        {
+            return new DataAccessObjectGenerator(
+                new DefaultDataAccessFileModelBuilder(new DefaultPropertyNameTransformer(), new DefaultDatabaseConventions()),
+                new ScribanTemplate<DataAccessObjectFileModel>(new EmbeddedTemplateSource("Upswing.Scriban.SqlServerDao.scriban")),
+                new DataAccessFileOutputWriter(outputPath));                
+        }
+
+        static IGenerator CreateEntityGenerator(string outputPath)
         {
             return new EntityGenerator(
                 new DefaultEntityFileModelBuilder(new SingletonPropertyNameTransformer()),
                 new ScribanTemplate<EntityFileModel>(new EmbeddedTemplateSource("Upswing.Scriban.Entity.scriban")),
-                new FileOutputWriter(outputPath, new DefaultEntityFileNamingStrategy()));
+                new EntityFileOutputWriter(outputPath, new DefaultEntityFileNamingStrategy()));
         }
 
-        static EntityGenerator CreateDapperMapperGeneartor(string outputPath)
+        static IGenerator CreateDapperMapperGeneartor(string outputPath)
         {
             return new EntityGenerator(
                 new DefaultEntityFileModelBuilder(new SingletonPropertyNameTransformer()),
                 new ScribanTemplate<EntityFileModel>(new EmbeddedTemplateSource("Upswing.Scriban.DapperMapper.scriban")),
-                new FileOutputWriter(outputPath, new DefaultEntityFileNamingStrategy("{0}DapperMapper.generated.cs")));
+                new EntityFileOutputWriter(outputPath, new DefaultEntityFileNamingStrategy("{0}DapperMapper.generated.cs")));
         }
     }
 }

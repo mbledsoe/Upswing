@@ -8,9 +8,13 @@
   <ItemGroup>
     <None Remove="Entity.scriban" />
     <None Remove="Scriban\DapperMapper.scriban" />
+    <None Remove="Scriban\InterfaceDao.scriban" />
+    <None Remove="Scriban\SqlServerDao.scriban" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Scriban\InterfaceDao.scriban" />
+    <EmbeddedResource Include="Scriban\SqlServerDao.scriban" />
     <EmbeddedResource Include="Scriban\Entity.scriban" />
     <EmbeddedResource Include="Scriban\DapperMapper.scriban" />
   </ItemGroup>
