@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Upswing
 {
-    public class EntityGenerator
+    public class EntityGenerator : IGenerator
     {
         private readonly IEntityFileModelBuilder entityFileModelBuilder;
         private readonly ITemplate<EntityFileModel> entityTemplate;
@@ -21,6 +21,8 @@ namespace Upswing
 
         public void Generate(TableDefinition tableDef, string entityNamespace)
         {
+            Console.WriteLine($"Generating for table {tableDef.TableName}");
+
             var entityFileModel = entityFileModelBuilder.BuildModel(tableDef, entityNamespace);
             var entityTemplateOutput = entityTemplate.Render(entityFileModel);
             outputWriter.WriteOutput(entityFileModel, entityTemplateOutput);

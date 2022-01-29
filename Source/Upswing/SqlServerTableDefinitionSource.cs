@@ -9,18 +9,22 @@ using Dapper;
 
 namespace Upswing
 {
-    class SqlServerMetadataDao
+    class SqlServerTableDefinitionSource : ITableDefinitionSource
     {
-        private readonly SqlConnection conn;
+        private string connString;
 
-        public SqlServerMetadataDao(SqlConnection conn)
-        {
-            this.conn = conn;
+        public SqlServerTableDefinitionSource(string connString)
+        {            
+            this.connString = connString;
         }
 
         public IList<TableDefinition> GetTableDefinitions()
         {
-            var tables = conn.Query<TableDefinition>(
+            using (var conn = new SqlConnection(connString))
+            {
+                conn.Open();
+
+                var tables = conn.Query<TableDefinition>(
                 @"
 select
 	s.schema_id as [SchemaId],
@@ -31,9 +35,9 @@ from sys.objects o
 join sys.schemas s on s.schema_id = o.schema_id
 where o.type = 'U'").ToList();
 
-            foreach (var tableDef in tables)
-            {
-                tableDef.Columns = conn.Query<ColumnDefinition>(@"
+                foreach (var tableDef in tables)
+                {
+                    tableDef.Columns = conn.Query<ColumnDefinition>(@"
 select
 	c.object_id as [TableId],
 	c.name as [ColumnName],
@@ -43,10 +47,11 @@ select
 	c.is_nullable as [IsNullable]
 from sys.columns c
 where c.object_id = @TableId",
-                     new { TableId = tableDef.TableId }).ToList();
-            }
+                         new { TableId = tableDef.TableId }).ToList();
+                }
 
-            return tables;
+                return tables;
+            }
         }
     }
 }

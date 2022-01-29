@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Upswing
 {
@@ -17,6 +18,8 @@ namespace Upswing
         {
             var filename = entityFileNamingStrategy.GetFileName(entityFileModel);
             var fullPath = Path.Combine(basePath, filename);
+
+            Console.WriteLine($"Writing file {fullPath}");
 
             File.WriteAllText(fullPath, output);
         }

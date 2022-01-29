@@ -17,22 +17,20 @@ namespace Upswing
 
         static void RunProgram(UpswingOptions options)
         {
-            var tableDefinitions = GetTableDefinitions(options.ConnectionString);
-            var generatorTableSpec = GetGeneratorTableSpec(options.Tables);
+            var tableDefinitionSource = new SqlServerTableDefinitionSource(options.ConnectionString);
+            var tableSpec = GetGeneratorTableSpec(options.Tables);
             var entityGenerator = CreateEntityGenerator(options.Output);
             var dapperMapperGenerator = CreateDapperMapperGeneartor(options.Output);
 
-            foreach (var tableDef in tableDefinitions)
-            {                
-                if (generatorTableSpec.IsMatch(tableDef))
-                {
-                    Console.WriteLine($"Generating entity file for table {tableDef.TableName}.");
-                    entityGenerator.Generate(tableDef, options.Namespace);
+            var generationProcess = new GenerationProcess();
 
-                    Console.WriteLine($"Generating DapperMapper file for table {tableDef.TableName}");
-                    dapperMapperGenerator.Generate(tableDef, options.Namespace);
-                }
-            }
+            Console.WriteLine($"Started generating Entity files.");
+            generationProcess.Run(tableDefinitionSource, tableSpec, entityGenerator, options.Namespace);
+            Console.WriteLine($"Finished generating Entity files.");
+
+            Console.WriteLine($"Started generating DapperMapper files.");
+            generationProcess.Run(tableDefinitionSource, tableSpec, dapperMapperGenerator, options.Namespace);
+            Console.WriteLine($"Finished generating DapperMapper files.");
         }
 
         private static ITableSpec GetGeneratorTableSpec(IEnumerable<string> tables)
@@ -40,14 +38,9 @@ namespace Upswing
             return tables.Any() ? new MatchOnNameTableSpec(tables.ToList()) : new MatchAllTableSpec();
         }
 
-        private static IList<TableDefinition> GetTableDefinitions(string connString)
+        private static ITableDefinitionSource CreateTableDefinitionSource(string connString)
         {
-            using (var conn = new SqlConnection(connString))
-            {
-                conn.Open();
-                var dao = new SqlServerMetadataDao(conn);
-                return dao.GetTableDefinitions();
-            }
+            return new SqlServerTableDefinitionSource(connString);
         }
 
         static EntityGenerator CreateEntityGenerator(string outputPath)
