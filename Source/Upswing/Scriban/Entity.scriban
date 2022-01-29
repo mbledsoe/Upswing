@@ -2,7 +2,7 @@
 
 namespace {{ namespace }}
 {
-	public class {{ entity_name }}
+	public partial class {{ entity_name }}
 	{
 		{{ for property in properties }}		
 		public {{ property.type_name }} {{ property.name }} { get; set; }

@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using CommandLine;
-using Scriban;
-using Upswing;
 using Upswing.Scriban;
 
 namespace Upswing
