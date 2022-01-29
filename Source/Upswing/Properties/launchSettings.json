@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Upswing": {
-      "commandName": "Project",
-      "commandLineArgs": "-c \"server=localhost;database=CrewVoDevLocal;integrated security=true\" -o \"C:\\Data\" -n \"CrewVo.DataModels\""
+      "commandName": "Project"
     }
   }
 }
