@@ -7,10 +7,12 @@
 
   <ItemGroup>
     <None Remove="Entity.scriban" />
+    <None Remove="Scriban\DapperMapper.scriban" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Scriban\Entity.scriban" />
+    <EmbeddedResource Include="Scriban\DapperMapper.scriban" />
   </ItemGroup>
 
   <ItemGroup>

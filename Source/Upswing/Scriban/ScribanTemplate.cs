@@ -9,19 +9,19 @@ using Scriban;
 
 namespace Upswing.Scriban
 {
-    public class ScribanEntityTemplate : IEntityTemplate
+    public class ScribanTemplate<T> : ITemplate<T>
     {
         private readonly ITemplateSource templateSource;
 
-        public ScribanEntityTemplate(ITemplateSource templateSource)
+        public ScribanTemplate(ITemplateSource templateSource)
         {
             this.templateSource = templateSource;
         }
 
-        public string Render(EntityFileModel entityFileModel)
+        public string Render(T templateFileModel)
         {
             var template = templateSource.ReadTemplate();
-            return template.Render(entityFileModel);
+            return template.Render(templateFileModel);
         }
     }
 }

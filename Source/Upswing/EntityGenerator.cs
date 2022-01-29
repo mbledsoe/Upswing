@@ -9,10 +9,10 @@ namespace Upswing
     public class EntityGenerator
     {
         private readonly IEntityFileModelBuilder entityFileModelBuilder;
-        private readonly IEntityTemplate entityTemplate;
+        private readonly ITemplate<EntityFileModel> entityTemplate;
         private readonly IOutputWriter outputWriter;
 
-        public EntityGenerator(IEntityFileModelBuilder entityFileModelBuilder, IEntityTemplate entityTemplate, IOutputWriter outputWriter)
+        public EntityGenerator(IEntityFileModelBuilder entityFileModelBuilder, ITemplate<EntityFileModel> entityTemplate, IOutputWriter outputWriter)
         {
             this.entityFileModelBuilder = entityFileModelBuilder;
             this.entityTemplate = entityTemplate;

@@ -1,0 +1,35 @@
+﻿using System;
+using Dapper;
+
+namespace {{ namespace }}
+{
+	/*==========================================================================================================
+
+		To use this class in your code add the following statement in a section of 
+		startup code that only gets executed once:
+	
+		Dapper.SqlMapper.SetTypeMap(typeof({{ entity_name }}), {{ entity_name}}DapperMapper.CreateTypeMap());
+
+	===========================================================================================================*/
+
+	public class {{ entity_name }}DapperMapper
+	{
+		public static CustomPropertyTypeMap CreateTypeMap()
+		{
+			return new CustomPropertyTypeMap(
+				typeof({{ entity_name }}),
+				(type, columnName) =>
+				{
+					{{ for property in properties }}
+					if (columnName == "{{ property.column.column_name }}")
+					{
+						return type.GetProperty("{{ property.name }}");
+					}
+					{{ end }}
+
+					throw new ArgumentException($"Invalid column name \"{columnName}\" for entity {{ entity_name }}");
+				}
+			)
+		}		
+	}
+}

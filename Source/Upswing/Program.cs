@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+
 using CommandLine;
 using Upswing.Scriban;
 
@@ -18,15 +19,18 @@ namespace Upswing
         {
             var tableDefinitions = GetTableDefinitions(options.ConnectionString);
             var generatorTableSpec = GetGeneratorTableSpec(options.Tables);
-            var generator = CreateEntityGenerator(options.Output);
+            var entityGenerator = CreateEntityGenerator(options.Output);
+            var dapperMapperGenerator = CreateDapperMapperGeneartor(options.Output);
 
             foreach (var tableDef in tableDefinitions)
-            {
-                Console.WriteLine($"Generating entity file for table {tableDef.TableName}.");
-
+            {                
                 if (generatorTableSpec.IsMatch(tableDef))
                 {
-                    generator.Generate(tableDef, options.Namespace);
+                    Console.WriteLine($"Generating entity file for table {tableDef.TableName}.");
+                    entityGenerator.Generate(tableDef, options.Namespace);
+
+                    Console.WriteLine($"Generating DapperMapper file for table {tableDef.TableName}");
+                    dapperMapperGenerator.Generate(tableDef, options.Namespace);
                 }
             }
         }
@@ -50,8 +54,16 @@ namespace Upswing
         {
             return new EntityGenerator(
                 new DefaultEntityFileModelBuilder(),
-                new ScribanEntityTemplate(new EmbeddedTemplateSource("Upswing.Scriban.Entity.scriban")),
+                new ScribanTemplate<EntityFileModel>(new EmbeddedTemplateSource("Upswing.Scriban.Entity.scriban")),
                 new FileOutputWriter(outputPath, new DefaultEntityFileNamingStrategy()));
+        }
+
+        static EntityGenerator CreateDapperMapperGeneartor(string outputPath)
+        {
+            return new EntityGenerator(
+                new DefaultEntityFileModelBuilder(),
+                new ScribanTemplate<EntityFileModel>(new EmbeddedTemplateSource("Upswing.Scriban.DapperMapper.scriban")),
+                new FileOutputWriter(outputPath, new DefaultEntityFileNamingStrategy("{0}DapperMapper.generated.cs")));
         }
     }
 }

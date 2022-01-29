@@ -14,7 +14,8 @@ namespace Upswing
             {
                 EntityName = tableDef.TableName,
                 Namespace = entityNamespace,
-                Properties = BuildEntityFileProperties(tableDef)
+                Properties = BuildEntityFileProperties(tableDef),
+                Table = tableDef
             };
         }
 
@@ -23,7 +24,8 @@ namespace Upswing
             return tableDef.Columns.Select(c => new EntityFileProperty
             {
                 Name = c.ColumnName,
-                TypeName = SqlUtils.GetClrTypeName(c)
+                TypeName = SqlUtils.GetClrTypeName(c),
+                Column = c
             }).ToList();
         }
     }
