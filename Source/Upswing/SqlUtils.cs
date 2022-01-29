@@ -2,25 +2,8 @@
 
 namespace Upswing
 {
-    internal static class SqlGenerationUtils
-    {
-        internal static string GetSqlDbType(short systemTypeId)
-        {
-            switch (systemTypeId)
-            {
-                case 56:
-                    return "SqlDbType.Int";
-                case 61:
-                    return "SqlDbType.DateTime";
-                case 104:
-                    return "SqlDbType.Bit";
-                case 231:
-                    return "SqlDbType.NVarChar";
-                default:
-                    throw new Exception($"Unknown Column Type: {systemTypeId}");
-            }
-        }
-
+    internal static class SqlUtils
+    {        
         // Query to get data type IDs:
         // select * from sys.types where name in ('char', 'varchar', 'nvarchar', 'text', 'ntext')
         internal static string GetClrTypeName(ColumnDefinition column)

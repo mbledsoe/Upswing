@@ -7,6 +7,7 @@ using System.Reflection;
 using CommandLine;
 using Scriban;
 using Upswing;
+using Upswing.Scriban;
 
 namespace Upswing
 {
@@ -19,25 +20,42 @@ namespace Upswing
 
         static void RunProgram(UpswingOptions options)
         {
-            using (var conn = new SqlConnection(options.ConnectionString))
+            var tableDefinitions = GetTableDefinitions(options.ConnectionString);
+            var generatorTableSpec = GetGeneratorTableSpec(options.Tables);
+            var generator = CreateEntityGenerator(options.Output);
+
+            foreach (var tableDef in tableDefinitions)
             {
-                conn.Open();
+                Console.WriteLine($"Generating entity file for table {tableDef.TableName}.");
 
-                var dao = new SqlServerMetadataDao(conn);
-                var tableDefinitions = dao.GetTableDefinitions();
-                var entityRenderer = new EntityFileRenderer();
-
-                ITableSpec tableSpec = (options.Tables.Any()) ? new MatchOnNameTableSpec(options.Tables.ToList()) : new MatchAllTableSpec();
-
-                foreach (var tableDef in tableDefinitions)
+                if (generatorTableSpec.IsMatch(tableDef))
                 {
-                    if (tableSpec.IsMatch(tableDef))
-                    {
-                        Console.WriteLine($"Generating for table {tableDef.TableName}.");
-                        entityRenderer.Render(tableDef, options.Output, options.Namespace);
-                    }                    
+                    generator.Generate(tableDef, options.Namespace);
                 }
             }
+        }
+
+        private static ITableSpec GetGeneratorTableSpec(IEnumerable<string> tables)
+        {
+            return tables.Any() ? new MatchOnNameTableSpec(tables.ToList()) : new MatchAllTableSpec();
+        }
+
+        private static IList<TableDefinition> GetTableDefinitions(string connString)
+        {
+            using (var conn = new SqlConnection(connString))
+            {
+                conn.Open();
+                var dao = new SqlServerMetadataDao(conn);
+                return dao.GetTableDefinitions();
+            }
+        }
+
+        static EntityGenerator CreateEntityGenerator(string outputPath)
+        {
+            return new EntityGenerator(
+                new DefaultEntityFileModelBuilder(),
+                new ScribanEntityTemplate(new EmbeddedTemplateSource("Upswing.Scriban.Entity.scriban")),
+                new FileOutputWriter(outputPath, new DefaultEntityFileNamingStrategy()));
         }
     }
 }

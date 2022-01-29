@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 namespace Upswing
 {
     public class EntityFileModel
-    {
+    {        
         public string Namespace { get; set; }
         public string EntityName { get; set; }
         public IList<EntityFileProperty> Properties { get; set; }
+        public TableDefinition Table { get; set; }
     }
 }

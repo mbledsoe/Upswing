@@ -20,7 +20,6 @@ namespace Upswing
 
         public IList<TableDefinition> GetTableDefinitions()
         {
-            var cmd = conn.CreateCommand();
             var tables = conn.Query<TableDefinition>(
                 @"
 select
