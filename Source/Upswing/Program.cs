@@ -38,11 +38,6 @@ namespace Upswing
             return tables.Any() ? new MatchOnNameTableSpec(tables.ToList()) : new MatchAllTableSpec();
         }
 
-        private static ITableDefinitionSource CreateTableDefinitionSource(string connString)
-        {
-            return new SqlServerTableDefinitionSource(connString);
-        }
-
         static EntityGenerator CreateEntityGenerator(string outputPath)
         {
             return new EntityGenerator(
