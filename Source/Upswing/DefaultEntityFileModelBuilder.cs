@@ -8,6 +8,18 @@ namespace Upswing
 {
     public class DefaultEntityFileModelBuilder : IEntityFileModelBuilder
     {
+        private readonly IPropertyNameTransformer propertyNameTransformer;
+
+        public DefaultEntityFileModelBuilder()
+            :this(new DefaultPropertyNameTransformer())
+        {
+        }
+
+        public DefaultEntityFileModelBuilder(IPropertyNameTransformer propertyNameTransformer)
+        {
+            this.propertyNameTransformer = propertyNameTransformer;
+        }
+
         public EntityFileModel BuildModel(TableDefinition tableDef, string entityNamespace)
         {
             return new EntityFileModel
@@ -23,7 +35,7 @@ namespace Upswing
         {
             return tableDef.Columns.Select(c => new EntityFileProperty
             {
-                Name = c.ColumnName,
+                Name = propertyNameTransformer.TransformName(c),
                 TypeName = SqlUtils.GetClrTypeName(c),
                 Column = c
             }).ToList();

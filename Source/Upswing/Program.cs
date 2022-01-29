@@ -41,7 +41,7 @@ namespace Upswing
         static EntityGenerator CreateEntityGenerator(string outputPath)
         {
             return new EntityGenerator(
-                new DefaultEntityFileModelBuilder(),
+                new DefaultEntityFileModelBuilder(new SingletonPropertyNameTransformer()),
                 new ScribanTemplate<EntityFileModel>(new EmbeddedTemplateSource("Upswing.Scriban.Entity.scriban")),
                 new FileOutputWriter(outputPath, new DefaultEntityFileNamingStrategy()));
         }
@@ -49,7 +49,7 @@ namespace Upswing
         static EntityGenerator CreateDapperMapperGeneartor(string outputPath)
         {
             return new EntityGenerator(
-                new DefaultEntityFileModelBuilder(),
+                new DefaultEntityFileModelBuilder(new SingletonPropertyNameTransformer()),
                 new ScribanTemplate<EntityFileModel>(new EmbeddedTemplateSource("Upswing.Scriban.DapperMapper.scriban")),
                 new FileOutputWriter(outputPath, new DefaultEntityFileNamingStrategy("{0}DapperMapper.generated.cs")));
         }
