@@ -30,7 +30,7 @@ namespace {{ namespace }}
 
 					throw new ArgumentException($"Invalid column name \"{columnName}\" for entity {{ entity_name }}");
 				}
-			)
+			);
 		}		
 	}
 }

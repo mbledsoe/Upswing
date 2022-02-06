@@ -48,7 +48,7 @@ namespace Upswing
 
         public string TransformTableName(TableDefinition tableDef)
         {
-            var match = Regex.Match(tableDef.TableName, @"^(.*)_T[0-9]{1,2}$");
+            var match = Regex.Match(tableDef.TableName, @"^(.*)_T[0-9]*$");
             
             if (match.Success)
             {
