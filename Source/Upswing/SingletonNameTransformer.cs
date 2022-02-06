@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Upswing
 {
-    class SingletonPropertyNameTransformer : IPropertyNameTransformer
+    public class SingletonNameTransformer : INameTransformer
     {
         /* Add an optional parameter to identify special characters in column name that should be removed.
          * Add an optional parameter to remove prefix, suffix, or both special character for example: _,$,@ */
-        public string TransformName(ColumnDefinition column)
+        public string TransformColumnName(ColumnDefinition column)
         {
             // Fine tune this logic once filter is implemented.
             var columnName = $"{column.ColumnName}";
@@ -43,6 +44,21 @@ namespace Upswing
 
             }
             return returnStr.ToString();
+        }
+
+        public string TransformTableName(TableDefinition tableDef)
+        {
+            var match = Regex.Match(tableDef.TableName, @"^(.*)_T[0-9]{1,2}$");
+            
+            if (match.Success)
+            {
+                if (match.Groups.Count >= 2)
+                {
+                    return match.Groups[1].Value;
+                }
+            }
+
+            return tableDef.TableName;
         }
     }
 }

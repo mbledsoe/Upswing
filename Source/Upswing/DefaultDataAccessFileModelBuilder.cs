@@ -7,10 +7,10 @@ namespace Upswing
 {
     public class DefaultDataAccessFileModelBuilder : IDataAccessFileModelBuilder
     {
-        private readonly IPropertyNameTransformer propertyNameTransformer;
+        private readonly INameTransformer propertyNameTransformer;
         private readonly IDatabaseConventions databaseConventions;
 
-        public DefaultDataAccessFileModelBuilder(IPropertyNameTransformer propertyNameTransformer,
+        public DefaultDataAccessFileModelBuilder(INameTransformer propertyNameTransformer,
             IDatabaseConventions databaseConventions)
         {
             this.propertyNameTransformer = propertyNameTransformer;
@@ -40,7 +40,7 @@ namespace Upswing
             {
                 Column = c,
                 IsNullable = c.IsNullable,
-                Name = propertyNameTransformer.TransformName(c),
+                Name = propertyNameTransformer.TransformColumnName(c),
                 ClrType = SqlUtils.GetClrTypeName(c)                
             }).ToList();            
         }
@@ -94,7 +94,7 @@ namespace Upswing
                 Name = c.ColumnName,
                 Size = c.MaxLength,
                 SqlDbType = GetSqlDbType(c),
-                ValueAccessor = propertyNameTransformer.TransformName(c)
+                ValueAccessor = propertyNameTransformer.TransformColumnName(c)
             }).ToList();
         }
 
@@ -105,7 +105,7 @@ namespace Upswing
                 Name = c.ColumnName,
                 Size = c.MaxLength,
                 SqlDbType = GetSqlDbType(c),
-                ValueAccessor = propertyNameTransformer.TransformName(c)
+                ValueAccessor = propertyNameTransformer.TransformColumnName(c)
             }).ToList();
 
             var idColumn = databaseConventions.GetIdColumn(tableDef);
@@ -115,7 +115,7 @@ namespace Upswing
                 Name = idColumn.ColumnName,
                 Size = idColumn.MaxLength,
                 SqlDbType = GetSqlDbType(idColumn),
-                ValueAccessor = propertyNameTransformer.TransformName(idColumn)
+                ValueAccessor = propertyNameTransformer.TransformColumnName(idColumn)
             });
 
             return updateParameters;
