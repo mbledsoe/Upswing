@@ -22,7 +22,7 @@ namespace {{ namespace }}
 				(type, columnName) =>
 				{
 					{{ for property in properties }}
-					if (columnName == "{{ property.column.column_name }}")
+					if (columnName == "{{ property.source_column.column_name }}")
 					{
 						return type.GetProperty("{{ property.name }}");
 					}

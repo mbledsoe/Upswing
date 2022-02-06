@@ -9,7 +9,7 @@ using Dapper;
 
 namespace Upswing
 {
-    class SqlServerTableDefinitionSource : ITableDefinitionSource
+    public class SqlServerTableDefinitionSource : ITableDefinitionSource
     {
         private string connString;
 

@@ -1,6 +1,6 @@
 ﻿namespace Upswing
 {
-    internal class MatchAllTableSpec : ITableSpec
+    public class MatchAllTableSpec : ITableSpec
     {
         public bool IsMatch(TableDefinition tableDef)
         {

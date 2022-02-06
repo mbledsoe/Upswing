@@ -11,16 +11,18 @@ namespace Upswing.Scriban
 {
     public class EmbeddedTemplateSource : ITemplateSource
     {
+        private readonly Assembly assembly;
         private readonly string templateName;
 
-        public EmbeddedTemplateSource(string templateName)
+        public EmbeddedTemplateSource(Assembly assembly, string templateName)
         {
+            this.assembly = assembly;
             this.templateName = templateName;
         }
 
         public Template ReadTemplate()
         {
-            using (var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(templateName))
+            using (var resourceStream = assembly.GetManifestResourceStream(templateName))
             {
                 using (var streamReader = new StreamReader(resourceStream))
                 {

@@ -1,16 +1,15 @@
 ﻿using System;
 
-namespace Upswing
+namespace Upswing.CSharp
 {
-    internal static class SqlUtils
-    {        
-        // Query to get data type IDs:
-        // select * from sys.types where name in ('char', 'varchar', 'nvarchar', 'text', 'ntext')
-        internal static string GetClrTypeName(ColumnDefinition column)
+    public class ClrTypeMapper
+    {
+        public static string GetClrType(ColumnDefinition column)
         {
             switch (column.SystemTypeId)
             {
                 case 52:
+                    return column.IsNullable ? "short?" : "short";
                 case 56:
                     return column.IsNullable ? "int?" : "int";
                 case 61:
@@ -30,6 +29,6 @@ namespace Upswing
                 default:
                     throw new Exception($"Unknown Column Type: {column.SystemTypeId}");
             }
-        }        
+        }
     }
 }

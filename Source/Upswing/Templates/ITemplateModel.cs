@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Upswing
 {
-    public interface IOutputWriter<TFileModel>
+    public interface ITemplateModel
     {
-        void WriteOutput(TFileModel fileModel, string generatedOutput);
+        string Name { get; set; }
     }
 }

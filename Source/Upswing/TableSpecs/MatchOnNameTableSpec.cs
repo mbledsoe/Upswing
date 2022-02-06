@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Upswing
 {
-    internal class MatchOnNameTableSpec : ITableSpec
+    public class MatchOnNameTableSpec : ITableSpec
     {
         private Dictionary<string, bool> includedTables = new Dictionary<string, bool>();
 
@@ -11,7 +11,7 @@ namespace Upswing
         {
             includedTables = tables.ToDictionary(table => table.ToLower(), table => true);
         }
-
+        
         public bool IsMatch(TableDefinition tableDef)
         {
             return includedTables.ContainsKey(tableDef.TableName.ToLower());

@@ -1,22 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>net5.0</TargetFramework>
+    <Version>1.0.1</Version>
+    <RepositoryUrl>https://github.com/mbledsoe/Upswing.git</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Entity.scriban" />
     <None Remove="Scriban\DapperMapper.scriban" />
-    <None Remove="Scriban\InterfaceDao.scriban" />
-    <None Remove="Scriban\SqlServerDao.scriban" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Scriban\InterfaceDao.scriban" />
-    <EmbeddedResource Include="Scriban\SqlServerDao.scriban" />
-    <EmbeddedResource Include="Scriban\Entity.scriban" />
-    <EmbeddedResource Include="Scriban\DapperMapper.scriban" />
+    <EmbeddedResource Include="CSharp\Templates\CSharpEntity.scriban" />
+    <EmbeddedResource Include="Dapper\Templates\DapperMapper.scriban" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,10 +22,6 @@
     <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="Scriban" Version="5.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Dapper\" />
   </ItemGroup>
 
 </Project>
