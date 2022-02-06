@@ -10,6 +10,7 @@ namespace Upswing
         {
             switch (column.SystemTypeId)
             {
+                case 52:
                 case 56:
                     return column.IsNullable ? "int?" : "int";
                 case 61:

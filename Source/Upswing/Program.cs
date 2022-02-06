@@ -27,7 +27,7 @@ namespace Upswing
             Console.WriteLine($"Finished generating Entity files.");
 
             Console.WriteLine($"Generating DapperMapper files.");
-            var dapperMapperGenerator = CreateDapperMapperGeneartor(options.Output);
+            var dapperMapperGenerator = CreateDapperMapperGenerator(options.Output);
             generationProcess.Run(tableDefinitionSource, tableSpec, dapperMapperGenerator, options.Namespace);
             Console.WriteLine($"Finished generating DapperMapper files.");
 
@@ -54,7 +54,7 @@ namespace Upswing
         private static IGenerator CreateInterfaceDaoGenerator(string outputPath)
         {
             return new DataAccessObjectGenerator(
-                new DefaultDataAccessFileModelBuilder(new DefaultPropertyNameTransformer(), new DefaultDatabaseConventions()),
+                new DefaultDataAccessFileModelBuilder(new DefaultNameTransformer(), new DefaultDatabaseConventions()),
                 new ScribanTemplate<DataAccessObjectFileModel>(new EmbeddedTemplateSource("Upswing.Scriban.InterfaceDao.scriban")),
                 new DataAccessFileOutputWriter(outputPath, "I{0}Dao.generated.cs"));
         }
@@ -62,7 +62,7 @@ namespace Upswing
         private static IGenerator CreateSqlServerDaoGenerator(string outputPath)
         {
             return new DataAccessObjectGenerator(
-                new DefaultDataAccessFileModelBuilder(new DefaultPropertyNameTransformer(), new DefaultDatabaseConventions()),
+                new DefaultDataAccessFileModelBuilder(new DefaultNameTransformer(), new DefaultDatabaseConventions()),
                 new ScribanTemplate<DataAccessObjectFileModel>(new EmbeddedTemplateSource("Upswing.Scriban.SqlServerDao.scriban")),
                 new DataAccessFileOutputWriter(outputPath));                
         }
@@ -70,15 +70,15 @@ namespace Upswing
         static IGenerator CreateEntityGenerator(string outputPath)
         {
             return new EntityGenerator(
-                new DefaultEntityFileModelBuilder(new SingletonPropertyNameTransformer()),
+                new DefaultEntityFileModelBuilder(new SingletonNameTransformer()),
                 new ScribanTemplate<EntityFileModel>(new EmbeddedTemplateSource("Upswing.Scriban.Entity.scriban")),
                 new EntityFileOutputWriter(outputPath, new DefaultEntityFileNamingStrategy()));
         }
 
-        static IGenerator CreateDapperMapperGeneartor(string outputPath)
+        static IGenerator CreateDapperMapperGenerator(string outputPath)
         {
             return new EntityGenerator(
-                new DefaultEntityFileModelBuilder(new SingletonPropertyNameTransformer()),
+                new DefaultEntityFileModelBuilder(new SingletonNameTransformer()),
                 new ScribanTemplate<EntityFileModel>(new EmbeddedTemplateSource("Upswing.Scriban.DapperMapper.scriban")),
                 new EntityFileOutputWriter(outputPath, new DefaultEntityFileNamingStrategy("{0}DapperMapper.generated.cs")));
         }
