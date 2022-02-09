@@ -1,0 +1,15 @@
+﻿using System;
+using Dapper;
+
+namespace {{ namespace }}
+{
+	public class DapperStartup
+	{
+		public static void RegisterTypeMaps()
+		{
+			{{- for entity in entities }}
+				Dapper.SqlMapper.SetTypeMap(typeof({{ entity.name }}), {{ entity.name}}DapperMapper.CreateTypeMap());
+			{{- end }}
+		}	
+	}
+}
