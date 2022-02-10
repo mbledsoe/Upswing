@@ -1,0 +1,63 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using Dapper;
+
+namespace {{ namespace }}
+{
+	// THIS IS A GENERATED CLASS, DO NOT MODIFY
+	// For customizations, create another partial class declaration with the same name and add your method there.
+	
+	public interface I{{ name }}
+	{
+		{{ entity_name }} SelectById(int id);
+		IList<{{ entity_name }}> SelectAll(int offset = 0, int pageSize = 25);
+		int Insert({{ entity_name }} entity);
+		void Update({{ entity_name }} entity);
+		void Delete({{ entity_name }} entity);
+	}
+
+	public partial class {{ name }} : I{{ name }}
+	{
+		private const string selectAllSql = "{{ select_all_sql }}";
+		private const string selectByIdSql = "{{ select_by_id_sql }}";
+		private const string insertSql = "{{ insert_sql }}";
+		private const string updateSql = "{{ update_sql }}";
+		private const string deleteSql = "{{ delete_sql }}";		
+
+		private readonly SqlConnection conn;
+
+		public {{ class_name }}(SqlConnection conn)
+		{
+			this.conn = conn;			
+		}
+
+		public {{ entity_name }} SelectById(int id)
+		{
+			return conn.Query<{{ entity_name }}>(selectByIdSql, new { {{ identity_column_name }} = id }).SingleOrDefault();
+		}
+
+		public IList<{{ entity_name }}> SelectAll(int offset = 0, int pageSize = 25)
+		{
+			return conn.Query<{{ entity_name }}>(selectAllSql, new { Offset = offset, PageSize = pageSize});
+		}
+
+		public int Insert({{ entity_name }} entity)
+		{
+			entity.{{ identity_property_name }} = conn.ExecuteScalar<int>(insertSql, entity);
+			
+			return entity.{{ identity_property_name }};
+		}
+
+		public void Update({{ entity_name }} entity)
+		{
+			return conn.Execute(updateSql, entity);
+		}
+
+		public void Delete({{ entity_name }} entity)
+		{
+			return conn.Execute(deleteSql, entity);
+		}
+	}
+}
