@@ -23,6 +23,32 @@ namespace Upswing.ConsoleTester
 
             GenerateCSharpEntities(options, tableDefinitionSource, tableSpec);
             GenerateDapperMappers(options, tableDefinitionSource, tableSpec);
+            GenerateDapperStartup(options, tableDefinitionSource, tableSpec);
+        }
+
+        private static void GenerateDapperStartup(UpswingOptions options, SqlServerTableDefinitionSource tableDefinitionSource, ITableSpec tableSpec)
+        {
+            var entityModelBuilder = new CSharpEntityBuilder(options.Namespace, new SingletonNameTransformer());
+
+            var template = new ScribanTemplate<CSharpEntityList>(
+                new EmbeddedTemplateSource(Assembly.GetAssembly(typeof(CSharpEntity)),
+                "Upswing.Dapper.Templates.DapperStartup.scriban"));
+
+            var outputWriter = new FileOutputWriter(options.Output, new SimpleFileNameFormat("DapperStartup.generated.cs"));
+            var entityList = new CSharpEntityList();
+            entityList.Namespace = options.Namespace;
+
+            foreach (var table in tableDefinitionSource.GetTableDefinitions())
+            {
+                if (tableSpec.IsMatch(table))
+                {
+                    var entity = entityModelBuilder.Build(table);
+                    entityList.Entities.Add(entity);
+                }
+            }
+
+            var output = template.Render(entityList);
+            outputWriter.Write(entityList, output);
         }
 
         private static void GenerateDapperMappers(UpswingOptions options, SqlServerTableDefinitionSource tableDefinitionSource, ITableSpec tableSpec)
@@ -41,7 +67,7 @@ namespace Upswing.ConsoleTester
             generator.Run(entityModelBuilder, template, outputWriter);
             Console.WriteLine("Done Generating Dapper Mappers");
             Console.WriteLine();
-        }
+        }        
 
         private static void GenerateCSharpEntities(UpswingOptions options, SqlServerTableDefinitionSource tableDefinitionSource, ITableSpec tableSpec)
         {

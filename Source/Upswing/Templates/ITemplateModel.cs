@@ -8,6 +8,6 @@ namespace Upswing
 {
     public interface ITemplateModel
     {
-        string Name { get; set; }
+        string Name { get; }
     }
 }
