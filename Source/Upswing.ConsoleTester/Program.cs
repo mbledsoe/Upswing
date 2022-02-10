@@ -22,10 +22,10 @@ namespace Upswing.ConsoleTester
             var tableDefinitionSource = new SqlServerTableDefinitionSource(options.ConnectionString);
             var tableSpec = GetGeneratorTableSpec(options.Tables);
 
-            //GenerateCSharpEntities(options, tableDefinitionSource, tableSpec);
-            //GenerateDapperMappers(options, tableDefinitionSource, tableSpec);
+            GenerateCSharpEntities(options, tableDefinitionSource, tableSpec);
+            GenerateDapperMappers(options, tableDefinitionSource, tableSpec);
             GenerateDapperDaos(options, tableDefinitionSource, tableSpec);
-            //GenerateDapperStartup(options, tableDefinitionSource, tableSpec);
+            GenerateDapperStartup(options, tableDefinitionSource, tableSpec);
         }
 
         private static void GenerateDapperDaos(UpswingOptions options, SqlServerTableDefinitionSource tableDefinitionSource, ITableSpec tableSpec)
