@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Dapper\Templates\DapperDao.scriban" />
     <None Remove="Dapper\Templates\DapperStartup.scriban" />
     <None Remove="Entity.scriban" />
     <None Remove="Scriban\DapperMapper.scriban" />
@@ -15,6 +16,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="CSharp\Templates\CSharpEntity.scriban" />
+    <EmbeddedResource Include="Dapper\Templates\DapperDao.scriban" />
     <EmbeddedResource Include="Dapper\Templates\DapperMapper.scriban" />
     <EmbeddedResource Include="Dapper\Templates\DapperStartup.scriban" />
   </ItemGroup>

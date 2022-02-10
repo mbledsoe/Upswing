@@ -5,6 +5,7 @@ using System.Reflection;
 using CommandLine;
 using Upswing;
 using Upswing.CSharp;
+using Upswing.Dapper;
 using Upswing.Scriban;
 
 namespace Upswing.ConsoleTester
@@ -23,7 +24,29 @@ namespace Upswing.ConsoleTester
 
             GenerateCSharpEntities(options, tableDefinitionSource, tableSpec);
             GenerateDapperMappers(options, tableDefinitionSource, tableSpec);
+            GenerateDapperDaos(options, tableDefinitionSource, tableSpec);
             GenerateDapperStartup(options, tableDefinitionSource, tableSpec);
+        }
+
+        private static void GenerateDapperDaos(UpswingOptions options, SqlServerTableDefinitionSource tableDefinitionSource, ITableSpec tableSpec)
+        {
+            var modelBuilder = new DapperDaoModelBuilder(options.Namespace, new SingletonNameTransformer());
+
+            var template = new ScribanTemplate<DapperDaoModel>(
+                new EmbeddedTemplateSource(Assembly.GetAssembly(typeof(CSharpEntity)),
+                "Upswing.Dapper.Templates.DapperDao.scriban"));
+
+            var outputWriter = new FileOutputWriter(options.Output, new SimpleFileNameFormat("{0}.generated.cs"));
+            
+            foreach (var table in tableDefinitionSource.GetTableDefinitions())
+            {
+                if (tableSpec.IsMatch(table))
+                {
+                    var model = modelBuilder.Build(table);
+                    var output = template.Render(model);
+                    outputWriter.Write(model, output);
+                }
+            }
         }
 
         private static void GenerateDapperStartup(UpswingOptions options, SqlServerTableDefinitionSource tableDefinitionSource, ITableSpec tableSpec)

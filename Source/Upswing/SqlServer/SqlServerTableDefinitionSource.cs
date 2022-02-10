@@ -44,7 +44,12 @@ select
 	c.column_id as [ColumnId],
 	c.system_type_id as [SystemTypeId],
 	c.max_length as [MaxLength],
-	c.is_nullable as [IsNullable]
+    c.precision as [Precision],
+    c.scale as [Scale],
+    c.is_rowguidcol as [IsRowGuidCol],
+	c.is_nullable as [IsNullable],
+    c.is_identity as [IsIdentity],
+    c.is_computed as [IsComputed]
 from sys.columns c
 where c.object_id = @TableId",
                          new { TableId = tableDef.TableId }).ToList();
