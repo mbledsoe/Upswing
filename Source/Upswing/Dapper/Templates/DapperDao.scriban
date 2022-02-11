@@ -14,8 +14,8 @@ namespace {{ namespace }}
 		{{ entity_name }} SelectById(int id);
 		IList<{{ entity_name }}> SelectAll(int offset = 0, int pageSize = 25);
 		int Insert({{ entity_name }} entity);
-		void Update({{ entity_name }} entity);
-		void Delete({{ entity_name }} entity);
+		int Update({{ entity_name }} entity);
+		int Delete({{ entity_name }} entity);
 	}
 
 	public partial class {{ name }} : I{{ name }}
@@ -28,7 +28,7 @@ namespace {{ namespace }}
 
 		private readonly SqlConnection conn;
 
-		public {{ class_name }}(SqlConnection conn)
+		public {{ name }}(SqlConnection conn)
 		{
 			this.conn = conn;			
 		}
@@ -40,7 +40,7 @@ namespace {{ namespace }}
 
 		public IList<{{ entity_name }}> SelectAll(int offset = 0, int pageSize = 25)
 		{
-			return conn.Query<{{ entity_name }}>(selectAllSql, new { Offset = offset, PageSize = pageSize});
+			return conn.Query<{{ entity_name }}>(selectAllSql, new { Offset = offset, PageSize = pageSize}).ToList();
 		}
 
 		public int Insert({{ entity_name }} entity)
@@ -50,12 +50,12 @@ namespace {{ namespace }}
 			return entity.{{ identity_property_name }};
 		}
 
-		public void Update({{ entity_name }} entity)
+		public int Update({{ entity_name }} entity)
 		{
 			return conn.Execute(updateSql, entity);
 		}
 
-		public void Delete({{ entity_name }} entity)
+		public int Delete({{ entity_name }} entity)
 		{
 			return conn.Execute(deleteSql, entity);
 		}

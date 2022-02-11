@@ -45,7 +45,7 @@ namespace Upswing.Dapper
         {
             var selectColumnList = string.Join(",", tableDefinition.Columns.Select(c => $"[{c.ColumnName}]"));
 
-            return $"select {selectColumnList} from [{tableDefinition.SchemaName}].[{tableDefinition.TableName}] order by [{tableDefinition.IdentityColumn.ColumnName}] offset @Offset rows fetch @PageSize rows only";
+            return $"select {selectColumnList} from [{tableDefinition.SchemaName}].[{tableDefinition.TableName}] order by [{tableDefinition.IdentityColumn.ColumnName}] offset @Offset rows fetch next @PageSize rows only";
         }
 
         private string BuildDeleteSql(TableDefinition tableDefinition)
