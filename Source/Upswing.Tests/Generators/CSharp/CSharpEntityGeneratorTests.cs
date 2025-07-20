@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Upswing.Generators.CSharp;
+﻿using Upswing.Generators.CSharp;
 using Upswing.SqlServer;
 
 namespace Upswing.Tests.Generators.CSharp
@@ -13,7 +8,19 @@ namespace Upswing.Tests.Generators.CSharp
 		[Test]
 		public void CanGenerateEntityFileContents()
 		{
-			var table = new SqlTable
+			SqlTable table = CreateMockSqlTable();
+
+			var generator = new CSharpEntityGenerator();
+			var output = generator.Generate(table);
+
+			var expectedFileContents = File.ReadAllText(".\\Generators\\CSharp\\CSharpEntityGeneratorSampleOutput.txt");
+
+			Assert.That(output, Is.EquivalentTo(expectedFileContents));
+		}
+
+		private static SqlTable CreateMockSqlTable()
+		{
+			return new SqlTable
 			{
 				ObjectId = 9876,
 				Name = "Person",
@@ -28,7 +35,7 @@ namespace Upswing.Tests.Generators.CSharp
 						ColumnId = 1,
 						SystemTypeId = 36,
 						UserTypeId = 36,
-						MaxLength = 16,						
+						MaxLength = 16,
 						Precision = 0,
 						Scale = 0,
 						IsNullable = false,
@@ -38,7 +45,7 @@ namespace Upswing.Tests.Generators.CSharp
 					{
 						ObjectId = 9876,
 						Name = "FirstName",
-						ColumnId = 2,						
+						ColumnId = 2,
 						SystemTypeId = 231,
 						UserTypeId = 231,
 						MaxLength = 100,
@@ -47,11 +54,11 @@ namespace Upswing.Tests.Generators.CSharp
 						IsNullable = false,
 						IsIdentity = false
 					},
-					new SqlColumn					
+					new SqlColumn
 					{
 						ObjectId = 9876,
 						Name = "LastName",
-						ColumnId = 3,						
+						ColumnId = 3,
 						SystemTypeId = 231,
 						UserTypeId = 231,
 						MaxLength = 100,
@@ -88,13 +95,6 @@ namespace Upswing.Tests.Generators.CSharp
 					}
 				}
 			};
-
-			var generator = new CSharpEntityGenerator();
-			var output = generator.Generate(table);
-
-			var expectedFileContents = File.ReadAllText(".\\Generators\\CSharp\\CSharpEntityGeneratorSampleOutput.txt");
-
-			Assert.That(output, Is.EquivalentTo(expectedFileContents));
 		}
 	}
 }
