@@ -1,0 +1,8 @@
+﻿using System;
+
+public class {{ class.name }}
+{
+	{{- for property in class.properties }}
+	public {{ property.type_name }} {{ property.name }} { get; set; }
+	{{- end }}
+}

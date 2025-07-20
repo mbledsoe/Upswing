@@ -9,6 +9,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+    <PackageReference Include="Scriban" Version="6.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Generators\CSharp\CSharpEntityGeneratorTemplate.scriban">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
